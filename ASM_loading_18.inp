@@ -1,0 +1,209 @@
+TITLE:
+    Longitudinal CHARLS 
+    ASM with factor loading constraints
+    
+DATA:
+    FILE IS mydataImpNewCov.dat;
+
+
+VARIABLE:
+    NAMES ARE ID hhID comID
+              SA1 IADL1T1-IADL1T5 DEP1T1-DEP1T8
+              SA2 IADL2T1-IADL2T5 DEP2T1-DEP2T8
+              SA3 IADL3T1-IADL3T5 DEP3T1-DEP3T8
+              SEX AGE URBAN MARRIAGE EDU
+              PA1 PA2 PA3;
+    !Note: SAiTj  i=time j=indicator index
+    
+    USEVARIABLES ARE 
+              SA1 IADL1T1-IADL1T5 DEP1T1-DEP1T8
+              SA2 IADL2T1-IADL2T5 DEP2T1-DEP2T8
+              SA3 IADL3T1-IADL3T5 DEP3T1-DEP3T8
+              SEX AGE URBAN MARRIAGE EDU
+              PA1 PA2 PA3;
+
+
+ANALYSIS:
+    ESTIMATOR IS ML;
+
+
+
+MODEL:
+
+! Label for constraints
+! The loadings of indicators are same across time 
+
+
+    IADL1 BY IADL1T1* (L7)
+             IADL1T2  (L8)
+             IADL1T3  (L9)
+             IADL1T4  (L10)
+             IADL1T5  (L11);
+
+    IADL2 BY IADL2T1* (L7)
+             IADL2T2  (L8)
+             IADL2T3  (L9)
+             IADL2T4  (L10)
+             IADL2T5  (L11);
+
+    IADL3 BY IADL3T1* (L7)
+             IADL3T2  (L8)
+             IADL3T3  (L9)
+             IADL3T4  (L10)
+             IADL3T5  (L11);
+
+    DEP1 BY DEP1T1* (L12)
+            DEP1T2  (L13)
+            DEP1T3  (L14)
+            DEP1T4  (L15)
+            DEP1T5  (L16)
+            DEP1T6  (L17)
+            DEP1T7  (L18)
+            DEP1T8  (L19);
+
+    DEP2 BY DEP2T1* (L12)
+            DEP2T2  (L13)
+            DEP2T3  (L14)
+            DEP2T4  (L15)
+            DEP2T5  (L16)
+            DEP2T6  (L17)
+            DEP2T7  (L18)
+            DEP2T8  (L19);
+
+    DEP3 BY DEP3T1* (L12)
+            DEP3T2  (L13)
+            DEP3T3  (L14)
+            DEP3T4  (L15)
+            DEP3T5  (L16)
+            DEP3T6  (L17)
+            DEP3T7  (L18)
+            DEP3T8  (L19);
+
+
+
+
+    !allow correlated residuals across time for IADL
+    IADL1T1 with IADL2T1 IADL3T1; 
+    IADL2T1 with IADL3T1;
+    IADL1T2 with IADL2T2 IADL3T2; 
+    IADL2T2 with IADL3T2;
+    IADL1T3 with IADL2T3 IADL3T3; 
+    IADL2T3 with IADL3T3;
+    IADL1T4 with IADL2T4 IADL3T4; 
+    IADL2T4 with IADL3T4;
+    IADL1T5 with IADL2T5 IADL3T5; 
+    IADL2T5 with IADL3T5;
+
+
+    !allow correlated residuals across time for DEP
+    DEP1T1 with DEP2T1 DEP3T1; 
+    DEP2T1 with DEP3T1;
+    DEP1T2 with DEP2T2 DEP3T2; 
+    DEP2T2 with DEP3T2;
+    DEP1T3 with DEP2T3 DEP3T3; 
+    DEP2T3 with DEP3T3;
+    DEP1T4 with DEP2T4 DEP3T4; 
+    DEP2T4 with DEP3T4;
+    DEP1T5 with DEP2T5 DEP3T5; 
+    DEP2T5 with DEP3T5;
+    DEP1T6 with DEP2T6 DEP3T6; 
+    DEP2T6 with DEP3T6;
+    DEP1T7 with DEP2T7 DEP3T7; 
+    DEP2T7 with DEP3T7;
+    DEP1T8 with DEP2T8 DEP3T8; 
+    DEP2T8 with DEP3T8;
+
+
+!modif indices suggest correlated residuals
+    IADL1T1 with IADL1T2;
+    IADL2T1 with IADL2T2;
+    IADL3T1 with IADL3T2;
+    DEP1T7 with DEP1T8;
+    DEP2T7 with DEP2T8;
+    DEP3T7 with DEP3T8;
+
+
+!factor variance fixed to 1 for identification
+    IADL1@1 ;
+    DEP1@1 ;
+
+
+!latent factor means fixed to 0 for identification
+    [IADL1@0 IADL2@0 IADL3@0];
+    [DEP1@0 DEP2@0 DEP3@0];
+
+
+
+!structural paths (free estiamtion across group and time)
+     !corss sectional structural paths 
+     !time 1
+     IADL1 ON PA1;
+     IADL1 ON SA1;
+     DEP1 ON PA1;
+     DEP1 ON SA1;
+     DEP1 ON IADL1;
+
+     !time 2
+     IADL2 ON PA2;
+     IADL2 ON SA2;
+     DEP2 ON PA2;
+     DEP2 ON SA2;
+     DEP2 ON IADL2;
+
+     !time 3
+     IADL3 ON PA3;
+     IADL3 ON SA3;
+     DEP3 ON PA3;
+     DEP3 ON SA3;
+     DEP3 ON IADL3;
+
+
+     !autoregression paths across time AR(2)
+     PA2 ON PA1;
+     PA3 ON PA2;
+     PA3 ON PA1;
+     SA2 ON SA1;
+     SA3 ON SA2;
+     SA3 ON SA1;
+     IADL2 ON IADL1;
+     IADL3 ON IADL2;
+     IADL3 ON IADL1;
+     DEP2 ON DEP1;
+     DEP3 ON DEP2;
+     DEP3 ON DEP1;
+
+     !covariates paths
+     PA1 ON SEX AGE URBAN MARRIAGE EDU;
+     PA2 ON SEX AGE URBAN MARRIAGE EDU;
+     PA3 ON SEX AGE URBAN MARRIAGE EDU;
+     SA1 ON SEX AGE URBAN MARRIAGE EDU;
+     SA2 ON SEX AGE URBAN MARRIAGE EDU;
+     SA3 ON SEX AGE URBAN MARRIAGE EDU;
+     IADL1 ON SEX AGE URBAN MARRIAGE EDU;
+     IADL2 ON SEX AGE URBAN MARRIAGE EDU;
+     IADL3 ON SEX AGE URBAN MARRIAGE EDU;
+     DEP1 ON SEX AGE URBAN MARRIAGE EDU;
+     DEP2 ON SEX AGE URBAN MARRIAGE EDU;
+     DEP3 ON SEX AGE URBAN MARRIAGE EDU;
+     
+Model indirect:
+    DEP1 IND PA1;
+    DEP1 IND SA1;
+    DEP2 IND PA2;
+    DEP2 IND SA2;
+    DEP3 IND PA3;
+    DEP3 IND SA3;
+    DEP2 IND PA1;
+    DEP2 IND SA1;
+    DEP3 IND PA2;
+    DEP3 IND SA2;
+    DEP3 IND PA1;
+    DEP3 IND SA1;
+
+
+
+
+OUTPUT:
+    TECH1 TECH4
+    STANDARDIZED
+    MODINDICES; 
