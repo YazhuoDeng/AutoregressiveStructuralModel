@@ -1,6 +1,5 @@
 TITLE:
-    Longitudinal CHARLS 
-    ASM with intercept constraints
+    The Autoregressive Structural Model -- strong (intercept) invariance 
     
 DATA:
     FILE IS mydataImpNewCov.dat;
@@ -25,7 +24,8 @@ VARIABLE:
 
 ANALYSIS:
     ESTIMATOR IS ML;
-
+    BOOTSTRAP IS 10000;
+    PROCESSORS = 4; 
 
 
 MODEL:
@@ -143,8 +143,8 @@ MODEL:
 
 
 
-!structural paths (free estiamtion across group and time)
-     !corss sectional structural paths 
+!structural paths 
+     !cross sectional structural paths 
      !time 1
      IADL1 ON PA1;
      IADL1 ON SA1;
@@ -210,9 +210,8 @@ Model indirect:
     DEP3 IND SA1;
 
 
-
-
 OUTPUT:
     TECH1 TECH4
     STANDARDIZED
-    MODINDICES;
+    MODINDICES
+    CINTERVAL (BCBOOTSTRAP);
