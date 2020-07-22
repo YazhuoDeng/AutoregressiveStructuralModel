@@ -245,8 +245,21 @@ for(i in 1:10){
   
   train.res = mplusModeler(train_script, "trainData.dat", modelout = "trainModel.inp", run = 1L)
   
-  parms = train.res$results$parameters
-  #lapply(parms,attributes)
+  parms = train.res$results$parameters	
+	
+  #create the syntax for loopPeplace to avoid manually input the parameter numbers
+  #syntax = data.frame(seq(length(parms$unstandardized$paramHeader)), 
+  #                    parms$unstandardized$paramHeader, 
+  #                    parms$unstandardized$param, stringsAsFactors = F)
+  #names(syntax) = c("rowN", "paramsH", "params")
+  #syntax$params <- paste(syntax$paramsH, syntax$params, sep = ' ')
+  #syntax$params <- paste(syntax$params,  '@[[', syntax$rowN, ']]', sep = '')
+  #syntax$params[syntax$paramsH == 'Intercepts'] <- paste0('[', syntax$params[syntax$paramsH == 'Intercepts'], ']')
+  #syntax$params <- paste(syntax$params,  ';\n', sep = '')
+  #syntax$params = gsub('Intercepts', '', syntax$params)
+  #syntax$params = gsub('Residual.Variances', '', syntax$params)
+  #syntax$params = gsub('\\.', ' ', syntax$params)
+  #cat(syntax$params)
   
   df_parms <- data.frame(parms[[1]]$param, parms[[1]]$est, 
                          stringsAsFactors = FALSE)
@@ -255,7 +268,7 @@ for(i in 1:10){
   df_parms2 <- t(df_parms)
   df_parms2 <- as.data.frame(df_parms2,stringsAsFactors = FALSE)
   df2 <- df_parms2[2,]
-  names(df2)<-as.character(c(1:273))
+  names(df2)<-as.character(seq(length(parms$unstandardized$paramHeader)))
   
   # Create Syntax for Test Data
   
@@ -659,55 +672,11 @@ RMSEA_plot<- ggplot(ModelSummary_10F, aes(x=FoldIndex, y=RMSEA)) +
 
 grid.arrange(CFI_plot,  RMSEA_plot, SRMR_plot, nrow = 1)
 #ggsave('plots_10Fold.pdf')
+                                                                                                                                                                           
 
 
 
-#ModelSummary_10F <- structure(list(FoldIndex = 1:10, 
-#                                   Neg2LL = c(115565.172, 116338.12, 115800.434, 116563.812, 116969.194, 116535.194, 
-#                                              116809.244, 116173.82, 118614.258, 116860.602), 
-#                                   CFI = c(0.864, 0.898, 0.888, 0.894, 0.877, 0.892, 0.901, 0.902, 0.887, 0.899), 
-#                                  SRMR = c(0.071, 0.051, 0.057, 0.056, 0.058, 0.055, 0.053, 0.055, 0.055, 0.056), 
-#                                  RMSEA = c(0.041,  0.034, 0.035, 0.035, 0.036, 0.037, 0.035, 0.035, 0.038, 0.036), 
-#                                  RMSEA_L = c(0.04, 0.032, 0.033, 0.033, 0.034, 0.035, 0.033, 0.033, 0.036, 0.034), 
-#                                  RMSEA_U = c(0.043, 0.036, 0.036, 0.036, 0.038, 0.039, 0.037, 0.037, 0.039, 0.037)), 
-#                              class = "data.frame", row.names = c(NA,  -10L))
-                                                                                                                                                                                                                     
-                                                                                                                                                                                       
 
-
-
-#ModelSummary_50F <- structure(list(Neg2LL = c(22529.594, 23260.486, 22992.456, 22813.202, 
-#                                          23932.824, 22327.016, 23124.596, 24085.68, 23121.326, 23677.318, 
-#                                          22804.13, 22860.884, 23740.148, 23116.062, 23282.414, 23852.134, 
-#                                          22608.37, 23322.782, 24229.798, 22587.514, 22858.616, 23072.614, 
-#                                          23702.526, 23272.528, 24031.296, 23575.482, 23473.792, 23005.034, 
-#                                          23164.128, 23324.762, 23351.472, 23067.836, 22908.83, 23555.818, 
-#                                          23943.942, 22945.908, 22930.792, 23190.446, 23142.69, 23973.084, 
-#                                          23970.118, 23451.588, 22741.924, 24292.422, 24124.758, 23793.93, 
-#                                          23286.446, 23355.376, 23107.382, 23302.868), SRMR = c(0.128, 
-#                                          0.107, 0.115, 0.108, 0.122, 0.171, 0.107, 0.094, 0.093, 0.096, 
-#                                          0.184, 0.11, 0.081, 0.11, 0.125, 0.096, 0.174, 0.125, 0.095, 
-#                                          0.134, 0.117, 0.129, 0.089, 0.103, 0.108, 0.101, 0.092, 0.106, 
-#                                          0.107, 0.089, 0.103, 0.1, 0.114, 0.092, 0.1, 0.101, 0.097, 0.118, 
-#                                          0.119, 0.097, 0.103, 0.1, 0.099, 0.097, 0.092, 0.089, 0.086, 
-#                                          0.103, 0.112, 0.106), RMSEA = c(0.079, 0.065, 0.073, 0.069, 0.061, 
-#                                          0.071, 0.061, 0.059, 0.063, 0.055, 0.075, 0.074, 0.056, 0.067, 
-#                                          0.068, 0.061, 0.07, 0.065, 0.062, 0.076, 0.061, 0.063, 0.062, 
-#                                          0.07, 0.064, 0.072, 0.058, 0.067, 0.068, 0.059, 0.063, 0.063, 
-#                                          0.069, 0.062, 0.064, 0.069, 0.07, 0.061, 0.065, 0.067, 0.067, 
-#                                          0.065, 0.064, 0.064, 0.06, 0.058, 0.061, 0.067, 0.062, 0.065), 
-#                                          RMSEA_L = c(0.075, 0.061, 0.069, 0.065, 0.057, 0.067, 0.057, 
-#                                          0.055, 0.059, 0.05, 0.071, 0.069, 0.052, 0.063, 0.064, 0.057, 
-#                                          0.066, 0.06, 0.057, 0.072, 0.057, 0.059, 0.057, 0.066, 0.059, 
-#                                          0.068, 0.054, 0.063, 0.063, 0.055, 0.059, 0.059, 0.065, 0.057, 
-#                                          0.06, 0.065, 0.065, 0.056, 0.06, 0.063, 0.062, 0.06, 0.059, 
-#                                          0.06, 0.055, 0.054, 0.057, 0.062, 0.057, 0.06), RMSEA_U = c(0.083, 
-#                                          0.069, 0.077, 0.073, 0.066, 0.075, 0.066, 0.064, 0.068, 0.059, 
-#                                          0.079, 0.078, 0.061, 0.071, 0.073, 0.066, 0.075, 0.069, 0.066, 
-#                                          0.08, 0.066, 0.068, 0.066, 0.075, 0.068, 0.076, 0.063, 0.071, 
-#                                          0.072, 0.064, 0.068, 0.068, 0.074, 0.066, 0.069, 0.074, 0.074, 
-#                                          0.065, 0.069, 0.071, 0.071, 0.069, 0.068, 0.069, 0.064, 0.063, 
-#                                          0.066, 0.071, 0.066, 0.069)), class = "data.frame", row.names = c(NA, -50L))
                                                                                                                                                                       
   
   
