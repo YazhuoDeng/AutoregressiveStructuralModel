@@ -247,7 +247,7 @@ for(i in 1:10){
   
   parms = train.res$results$parameters	
 	
-  #create the syntax for loopPeplace to avoid manually input the parameter numbers
+  #create the syntax for loopPeplace to avoid manually inputting the parameter numbers
   #syntax = data.frame(seq(length(parms$unstandardized$paramHeader)), 
   #                    parms$unstandardized$paramHeader, 
   #                    parms$unstandardized$param, stringsAsFactors = F)
